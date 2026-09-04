@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AERO-MORPH 4D | Calzado Reactivo Futuro</title>
+  
+  <!-- Web Components / Polyfills for Model-Viewer -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0a0b10;
+      --card-bg: rgba(18, 22, 36, 0.7);
+      --accent-cyan: #00f0ff;
+      --accent-purple: #7000ff;
+      --text-main: #e2e8f0;
+      --text-dim: #94a3b8;
+      --font-title: 'Orbitron', sans-serif;
+      --font-body: 'Rajdhani', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Ambient Glow Background */
+    .glow-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 70%, rgba(112, 0, 255, 0.1) 0%, transparent 40%);
+    }
+
+    /* Header Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      background: rgba(10, 11, 16, 0.6);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .logo {
+      font-family: var(--font-title);
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .logo span {
+      color: var(--accent-cyan);
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      padding: 4px 10px;
+      border-radius: 20px;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    /* Layout Main Grid */
+    main {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+
+    @media (max-width: 968px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 3D Model Viewer Container */
+    .viewer-section {
+      position: sticky;
+      top: 80px;
+      height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    @media (max-width: 968px) {
+      .viewer-section {
+        position: relative;
+        top: 0;
+        height: 60vh;
+      }
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      --poster-color: transparent;
+    }
+
+    /* Custom AR Button */
+    .ar-button {
+      position: absolute;
+      bottom: 40px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border: none;
+      color: #fff;
+      font-family: var(--font-title);
+      font-weight: 700;
+      padding: 14px 28px;
+      font-size: 0.9rem;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ar-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.7);
+    }
+
+    /* Story & Content Narrative */
+    .story-section {
+      padding: 60px 40px 100px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+    }
+
+    @media (max-width: 968px) {
+      .story-section {
+        padding: 40px 20px;
+      }
+    }
+
+    .hero-text h1 {
+      font-family: var(--font-title);
+      font-size: 3rem;
+      line-height: 1.1;
+      margin-bottom: 15px;
+      background: linear-gradient(to right, #fff, var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-text p.subtitle {
+      font-size: 1.2rem;
+      color: var(--accent-cyan);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Story Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(0, 240, 255, 0.3);
+      transform: translateY(-4px);
+    }
+
+    .card h2 {
+      font-family: var(--font-title);
+      color: #fff;
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card h2 .step-num {
+      color: var(--accent-cyan);
+      font-size: 0.9rem;
+      border: 1px solid var(--accent-cyan);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .card p {
+      font-size: 1.05rem;
+      color: var(--text-dim);
+    }
+
+    /* Tech Specs List */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .spec-item {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border-left: 3px solid var(--accent-purple);
+    }
+
+    .spec-title {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .spec-value {
+      font-family: var(--font-title);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    /* Compatibility Indicator */
+    .compatibility {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      background: rgba(0, 240, 255, 0.05);
+      border-radius: 12px;
+      border: 1px dashed rgba(0, 240, 255, 0.3);
+    }
+
+    .compatibility-icon {
+      font-size: 1.8rem;
+    }
+
+    .compatibility-text {
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-bg"></div>
+
+  <header>
+    <div class="logo">AERO<span>MORPH</span></div>
+    <div class="badge">4D PRINTED LAB</div>
+  </header>
+
+  <main>
+    <!-- Visualizador 3D y Realidad Aumentada -->
+    <section class="viewer-section">
+      <!-- 
+        model-viewer utiliza WebGL para el renderizado 3D en el navegador 
+        y soporte nativo de AR tanto en Android (Scene Viewer/WebXR) como iOS (AR Quick Look via USDZ).
+      -->
+      <model-viewer 
+        src="assets/shoe.glb" 
+        ios-src="assets/shoe.usdz"
+        alt="Modelo 3D interactivo de calzado 4D AERO-MORPH"
+        ar
+        ar-modes="webxr scene-viewer quicklook"
+        camera-controls
+        touch-action="pan-y"
+        auto-rotate
+        shadow-intensity="1.5"
+        shadow-softness="0.8"
+        exposure="1.2">
+        
+        <button slot="ar-button" class="ar-button">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          VER EN TU ESPACIO (AR)
+        </button>
+      </model-viewer>
+    </section>
+
+    <!-- Narrativa / Storytelling -->
+    <section class="story-section">
+      <div class="hero-text">
+        <p class="subtitle">Diseño Prospectivo Vol. I</p>
+        <h1>EL CALZADO QUE RESPIRA Y SE ADAPTA</h1>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-num">01</span> La Génesis del Material 4D</h2>
+        <p>
+          Imaginado no solo para ser vestido, sino para reaccionar. <strong>AERO-MORPH</strong> nace de la convergencia entre la biometría y la manufactura aditiva. Fabricado mediante impresión 4D, su estructura entramada utiliza elastómeros foto-reactivos que cambian de rigidez según la presión y la temperatura biomecánica del usuario.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-num">02</span> Geometría Algorítmica</h2>
+        <p>
+          Su entramado orgánico fue diseñado con algoritmos generativos que imitan la arquitectura trabecular del hueso humano. Esto elimina la necesidad de pegamentos, costuras o materiales sintéticos tradicionales, logrando un peso ultra liviano con una amortiguación hiper-localizada.
+        </p>
+        <div class="specs-grid">
+          <div class="spec-item">
+            <div class="spec-title">Tecnología</div>
+            <div class="spec-value">FDM 4D Dynamic</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-title">Material</div>
+            <div class="spec-value">Polímero Termo-Resistente</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-title">Peso</div>
+            <div class="spec-value">180g (Talla 42)</div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-title">Reciclabilidad</div>
+            <div class="spec-value">100% Mono-Material</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="step-num">03</span> Prueba el Futuro Hoy</h2>
+        <p>
+          Utiliza la cámara de tu smartphone para desplegar este prototipo a escala real sobre cualquier superficie. Experimenta con sus proporciones y observa de cerca cómo se integra la física digital en el diseño industrial del mañana.
+        </p>
+      </div>
+
+      <div class="compatibility">
+        <div class="compatibility-icon">📱</div>
+        <div class="compatibility-text">
+          <strong>Soporte Multiplataforma Nativo:</strong><br>
+          • <strong>Android:</strong> Impulsado por WebXR / Scene Viewer (archivos .GLB)<br>
+          • <strong>iOS (iPhone/iPad):</strong> AR Quick Look nativo (archivos .USDZ)
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Prototipado Futuro & Design Lab. Todos los derechos reservados.</p>
+  </footer>
+
+</body>
+</html>
